@@ -1,0 +1,1 @@
+public static const apiKey:String = "YOUR_API_KEY_HERE";

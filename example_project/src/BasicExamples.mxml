@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"  backgroundColor="#FFFFFF">
+<mx:Script source="BasicExamples.as"/>
+	<mx:TextInput x="23" y="23" id="inputBox" />
+	<mx:TextArea x="23" y="53" width="752" height="477" id="resultsBox" editable="false"/>
+	<mx:Button x="190" y="23" label="Search" click="this.search(this.inputBox.text)"/>
+	<mx:Button x="629" y="538" label="Previous" click="this.previous()" id="prevButton" enabled="false"/>
+	<mx:Button x="710" y="538" label="Next" click="this.next()" id="nextButton" enabled="false"/>
+	
+</mx:Application>
