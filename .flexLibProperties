@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<flexLibProperties includeAllClasses="true" version="3">
+  <includeClasses>
+    <classEntry path="org.freesound.User"/>
+    <classEntry path="org.freesound.Sound"/>
+    <classEntry path="org.freesound.SoundCollection"/>
+    <classEntry path="org.freesound.Pack"/>
+    <classEntry path="org.freesound.PackCollection"/>
+  </includeClasses>
+  <includeResources/>
+  <namespaceManifests/>
+</flexLibProperties>
