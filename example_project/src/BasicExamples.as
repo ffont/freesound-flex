@@ -23,7 +23,17 @@ private function search(query:String):void // Called when the mxml is loaded
 	// ******************
 	
 	// We use the SoundCollection object as the result of the query will be a collection of sounds (only its information, not its audio data)	
-	sc.getSoundsFromQuery({q:query}); // "q" parameter specifies the query. More options like filters are available as described in the API (http://tabasco.upf.edu/media/docs/api/resources.html#resources)
+	// With the "All results mode" checkbox we can change the behaviour of the results display:
+	//	- All results mode ON: we obtain as many results as the specified in the "Max results" input box.
+	//                         All results are displayed in one single page, and the time needed to load depends on "Max results"
+	//  - All results mode OFF: we obtain paginated results. First 30 results are displayed and following pages can be navigated with "next" and "previous" buttons.
+	
+	if (!this.modeCheckbox.selected){
+		sc.getSoundsFromQuery({q:query}); // "q" parameter specifies the query. More options like filters are available as described in the API (http://tabasco.upf.edu/media/docs/api/resources.html#resources)
+	}else{
+		sc.getNSoundsFromQuery({q:query},(int)(this.inputBoxNResults.text));
+	}
+	
 	
 	// When this method is called, "sc" will request the information to Freesound. Once recieved, it will be loaded into its attributes. 
 	// In order to know when is the information available, "sc" dispatches a "GotSoundCollection" event that should be catched with an EventListener.
@@ -47,7 +57,7 @@ private function displayQueryResults(event:ResultEvent):void
 	// To navigate among other results, "next" and "previous" buttons must be used.
 	
 	for (var i:int=0;i<sc.soundList.length;i++){
-		info = info + " - " + sc.soundList[i].original_filename + "\n";
+		info = info + (i + 1).toString() + " - " + sc.soundList[i].original_filename + "\n";
 	}
 	
 	// Punt information in the results box text area
@@ -82,10 +92,20 @@ private function previous():void
 	sc.previousPage();	
 }
 
+private function toggleAllResultsMode():void
+{
+	if (this.modeCheckbox.selected){
+		this.inputBoxNResults.enabled = true;
+	}else{
+		this.inputBoxNResults.enabled = false;
+	}
+}
+
 private function faultHandler(event:FaultEvent):void
 {
 	// If we find any errors we print it on the results box text area.
 	this.resultsBox.text = event.toString();
 }
+
 
 
