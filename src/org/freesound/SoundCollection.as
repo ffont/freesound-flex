@@ -139,34 +139,7 @@ package org.freesound
 			
 			for (var i:int=0;i<jd.getValue().sounds.length;i++) {
 				var s:Sound = new Sound(this.apiKey);
-				s.loadInfo(	jd.getValue().sounds[i].id,
-							jd.getValue().sounds[i].ref, 
-							jd.getValue().sounds[i].url, 
-							jd.getValue().sounds[i].preview, 
-							jd.getValue().sounds[i].serve, 
-							jd.getValue().sounds[i].type, 
-							jd.getValue().sounds[i].duration, 
-							-1.0, //jd.getValue().sounds[i].samplerate, // null, only aviablable on single-sound request (Sound class)
-							jd.getValue().sounds[i].bitdephth, 
-							jd.getValue().sounds[i].filesize, 
-							jd.getValue().sounds[i].bitrate, 
-							jd.getValue().sounds[i].channels, 
-							jd.getValue().sounds[i].original_filename, 
-							"", //jd.getValue().sounds[i].description, // null, only aviablable on single-sound request (Sound class)
-							jd.getValue().sounds[i].tags, 
-							"", //jd.getValue().sounds[i].license, // null, only aviablable on single-sound request (Sound class)
-							"", //d.getValue().sounds[i].created, // null, only aviablable on single-sound request (Sound class)
-							jd.getValue().sounds[i].num_comments, 
-							jd.getValue().sounds[i].num_downloads, 
-							jd.getValue().sounds[i].num_ratings, 
-							-1.0, //jd.getValue().sounds[i].avg_rating, // null, only aviablable on single-sound request (Sound class)
-							jd.getValue().sounds[i].pack, 
-							jd.getValue().sounds[i].user, 
-							jd.getValue().sounds[i].spectral_m, 
-							jd.getValue().sounds[i].spectral_l, 
-							jd.getValue().sounds[i].waveform_m, 
-							jd.getValue().sounds[i].waveform_l 
-				);
+				s.loadInfo(jd.getValue().sounds[i]);
 				
 				if (this.maxResults != -1){
 					if (this.currentObtainedResults < this.maxResults){
@@ -182,7 +155,6 @@ package org.freesound
 				}
 			}
 			
-			trace(this.currentObtainedResults);
 			if (this.maxResults != -1){
 				this.num_results = this.currentObtainedResults;
 			}else{

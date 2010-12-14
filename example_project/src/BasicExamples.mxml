@@ -3,10 +3,19 @@
 <mx:Script source="BasicExamples.as"/>
 	<mx:TextInput x="23" y="23" id="inputBox" />
 	<mx:TextInput x="456" y="23" id="inputBoxNResults"  width="47" editable="true" enabled="false" text="15"/>
-	<mx:TextArea x="23" y="53" width="752" height="477" id="resultsBox" editable="false"/>
+	<mx:TextArea x="23" y="53" width="752" height="22" id="resultsBox" editable="false"/>
 	<mx:Button x="190" y="23" label="Search" click="this.search(this.inputBox.text)"/>
-	<mx:Button x="629" y="538" label="Previous" click="this.previous()" id="prevButton" enabled="false"/>
-	<mx:Button x="710" y="538" label="Next" click="this.next()" id="nextButton" enabled="false"/>
+	<mx:Button x="641" y="537" label="Previous" click="this.previous()" id="prevButton" enabled="false"/>
+	<mx:Button x="722" y="537" label="Next" click="this.next()" id="nextButton" enabled="false"/>
 	<mx:CheckBox x="263" y="23" label="All results mode, Max results:" id="modeCheckbox" click="this.toggleAllResultsMode()"/>
+	<mx:DataGrid x="23" y="83" width="752" id="resultsGrid" height="447"  itemClick="this.gridItemClick(event)" doubleClickEnabled="true" itemDoubleClick="this.gridItemDoubleClick(event)" >
+		<mx:columns>
+			<mx:DataGridColumn headerText="File name" dataField="info.original_filename"/>
+			<mx:DataGridColumn headerText="Tags" dataField="info.tags"/>
+			<mx:DataGridColumn headerText="User" dataField="info.user.username"/>
+		</mx:columns>
+	</mx:DataGrid>
+	<mx:Image x="783" y="53" id="waveformDisplay" scaleContent="false" scaleX="0.5" scaleY="0.5"/>
+	<mx:Image x="783" y="163" id="spectrumDisplay" scaleContent="false" scaleX="0.5" scaleY="0.5"/>
 	
 </mx:Application>

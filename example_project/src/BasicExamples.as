@@ -2,21 +2,25 @@
 // This file must only contain a variable named "apiKey" like: public static const apiKey:String = "YOUR_KEY_HERE";
 include "ApiKey.as";
 
-// Import Freesound classes
-import org.freesound.Pack;
-import org.freesound.PackCollection;
-import org.freesound.Sound;
-import org.freesound.SoundCollection;
-import org.freesound.User;
+// Import Freesound sound collections
+import flash.events.Event;
+import flash.media.Sound;
+import flash.media.SoundChannel;
 
-// Import class
+import mx.events.ListEvent;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.events.ResultEvent;
 
-// Initialize freesound object to handle lists of sounds (SoundCollection)
+import org.freesound.SoundCollection;
+
+// Initialize sound collection object
 private var sc:SoundCollection = new SoundCollection(apiKey);
 
-private function search(query:String):void // Called when the mxml is loaded
+// Initialize soundchannel object to reproduce sounds
+private var schannel:SoundChannel = new SoundChannel();
+
+
+private function search(query:String):void 
 {
 	
 	// QUERYING FREESOUND
@@ -52,17 +56,11 @@ private function displayQueryResults(event:ResultEvent):void
 	
 	// Number of results
 	info = info + sc.num_results + " results found. Displaying page " + sc.current_page + "/" + sc.num_pages + ".\n\n";
+	this.resultsBox.text = info;
 	
 	// Individual results (only first page is displayed, 30 results)
 	// To navigate among other results, "next" and "previous" buttons must be used.
-	
-	for (var i:int=0;i<sc.soundList.length;i++){
-		info = info + (i + 1).toString() + " - " + sc.soundList[i].original_filename + "\n";
-	}
-	
-	// Punt information in the results box text area
-	this.resultsBox.text = info;
-	
+	this.resultsGrid.dataProvider = sc.soundList;
 	
 	// Enable and disable "previous" and "next" buttons
 	if (sc.current_page == 1){
@@ -107,5 +105,28 @@ private function faultHandler(event:FaultEvent):void
 	this.resultsBox.text = event.toString();
 }
 
+// Function to handle user clicks in the data grid
+private function gridItemClick(event:ListEvent):void 
+{
+	// When a result is selected, its waveform is loaded
+	this.waveformDisplay.source = this.resultsGrid.dataProvider[event.rowIndex].info.waveform_l;
+	this.spectrumDisplay.source = this.resultsGrid.dataProvider[event.rowIndex].info.spectral_l;
+}
 
+// Function to handle user double clicks in the data grid
+private function gridItemDoubleClick(event:ListEvent):void 
+{
+	// When a result is double clicked, it is reproduced
+	schannel.stop();
+	var s:Sound = new Sound();
+	s.addEventListener(Event.COMPLETE,onSoundLoadComplete);
+	var req:URLRequest = new URLRequest(this.resultsGrid.dataProvider[event.rowIndex].info.preview + "?api_key=" + apiKey);
+	s.load(req);
+}
 
+private function onSoundLoadComplete(event:Event):void
+{
+	// When sound is loaded, start reproducing
+	var localSound:Sound = event.target as Sound;
+	schannel = localSound.play();
+}

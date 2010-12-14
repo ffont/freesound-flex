@@ -54,15 +54,7 @@ package org.freesound
 			this.packList = new Array();
 			for (var i:int=0;i<jd.getValue().length;i++) {
 				var p:Pack = new Pack(this.apiKey);
-				p.loadInfo(	jd.getValue()[i].name,
-							jd.getValue()[i].ref,
-							jd.getValue()[i].url,
-							jd.getValue()[i].sounds,
-							jd.getValue()[i].description,
-							jd.getValue()[i].created,
-							jd.getValue()[i].num_downloads,
-							{username:this.user_name,url:"http://tabasco.upf.edu/people/" + this.user_name + "/",ref:"http://tabasco.upf.edu/api/people/" + this.user_name + "/"}
-							);
+				p.loadInfo(	jd.getValue()[i] );
 				this.packList.push(p);
 			}
 

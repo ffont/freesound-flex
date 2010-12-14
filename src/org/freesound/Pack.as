@@ -13,17 +13,7 @@ package org.freesound
 		public var packLoaded:Boolean = false;
 		
 		// Pack properties
-		public var name:String = "";
-		public var ref:String = "";
-		public var url:String = "";
-		public var id:int = -1;
-		public var sounds:String = "";
-		public var descriptrion:String = "";
-		public var created:String = "";
-		public var num_downloads:String = "";
-		public var user_name:String = "";
-		public var user:Object = {username:"",url:"",ref:""};
-		
+		public var info:Object = new Object();
 		
 		public function Pack(key:String)
 		{
@@ -32,26 +22,9 @@ package org.freesound
 			this.http.addEventListener( FaultEvent.FAULT, faultHandler );
 		}
 		
-		public function loadInfo(name:String, 
-								 ref:String, 
-								 url:String, 
-								 sounds:String, 
-								 description:String, 
-								 created:String, 
-								 num_downloads:String, 
-								 user:Object
-								):void
+		public function loadInfo(info:Object):void
 		{
-			this.name = name;
-			this.ref = ref;
-			this.url = url;
-			this.id = (int)(this.url.slice(this.url.lastIndexOf("/",this.url.length - 2) + 1,this.url.length - 1));
-			this.sounds = sounds;
-			this.descriptrion = description;
-			this.created = created;
-			this.num_downloads = num_downloads;
-			this.user = user;
-			
+			this.info = info;
 			this.packLoaded = true;
 		}
 		
@@ -72,15 +45,7 @@ package org.freesound
 			
 			var data:String = event.result.toString();
 			var jd:JSONDecoder = new JSONDecoder(data,true);		
-			this.loadInfo(	jd.getValue().name,
-							jd.getValue().ref,
-							jd.getValue().url,
-							jd.getValue().sounds,
-							jd.getValue().description,
-							jd.getValue().created,
-							jd.getValue().num_downloads,
-							jd.getValue().user
-							);
+			this.loadInfo(jd.getValue());
 			
 			// Notify client that info is available
 			this.dispatchEvent(new ResultEvent("GotPackInfo"));	

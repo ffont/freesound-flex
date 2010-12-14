@@ -1,3 +1,2 @@
 SHORT-TIME TODO:
-- Eliminate static class attributes and turn them to dynamic (directly taken from the json decoder object)
 - Create more examples and write documentation

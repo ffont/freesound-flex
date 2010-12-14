@@ -14,17 +14,7 @@ package org.freesound
 		private var userLoaded:Boolean = false;
 		
 		// User properties
-		public var username:String = "";
-		public var first_name:String = "";
-		public var last_name:String = "";
-		public var url:String = "";
-		public var ref:String = "";
-		public var sounds:String = "";
-		public var packs:String = "";
-		public var about:String = "";
-		public var home_page:String = "";
-		public var signature:String = "";
-		public var date_joined:String = "";
+		public var info:Object = new Object();
 		
 		private var packCollection:PackCollection;
 		
@@ -59,20 +49,10 @@ package org.freesound
 			var jd:JSONDecoder = new JSONDecoder(data,true);
 			
 			// Fill data structure			
-			this.username = 	jd.getValue().username;
-			this.first_name = 	jd.getValue().first_name;
-			this.last_name = 	jd.getValue().last_name;
-			this.url = 			jd.getValue().url;
-			this.ref = 			jd.getValue().ref;
-			this.sounds = 		jd.getValue().sounds;
-			this.packs = 		jd.getValue().packs;
-			this.about = 		jd.getValue().about;
-			this.home_page = 	jd.getValue().home_page;
-			this.signature = 	jd.getValue().signature;
-			this.date_joined = 	jd.getValue().date_joined;
+			this.info = jd.getValue();
 			
 			// Ask for pack information
-			this.packCollection.getPacksFromUser(this.username);
+			this.packCollection.getPacksFromUser(this.info.username);
 			this.packCollection.addEventListener("GotUserPacks", packInfoHandler);
 			
 		}
