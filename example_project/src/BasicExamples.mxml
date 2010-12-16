@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"  backgroundColor="#FFFFFF">
 <mx:Script source="BasicExamples.as"/>
-	<mx:TextInput x="23" y="23" id="inputBox" />
+	<mx:TextInput x="23" y="23" id="inputBox" change="this.search(this.inputBox.text)"/>
 	<mx:TextInput x="456" y="23" id="inputBoxNResults"  width="47" editable="true" enabled="false" text="15"/>
-	<mx:TextArea x="23" y="53" width="752" height="22" id="resultsBox" editable="false"/>
+	<mx:TextArea x="23" y="53" width="752" height="22" id="resultsBox" editable="false" borderStyle="none" text="-"/>
 	<mx:TextArea x="783" y="382" width="449" height="177" id="descriptionBox" editable="false" borderStyle="none" backgroundAlpha="0.0" color="#0B333C" text="-"/>
 	<mx:Button x="190" y="23" label="Search" click="this.search(this.inputBox.text)"/>
 	<mx:Button x="641" y="537" label="Previous" click="this.previous()" id="prevButton" enabled="false"/>
