@@ -28,9 +28,6 @@ private var s:org.freesound.Sound = new org.freesound.Sound(apiKey);
 // Initialize soundchannel object to reproduce sounds
 private var schannel:SoundChannel = new SoundChannel();
 
-// Variables to handle instant search
-private var isSearching:Boolean = false;
-
 private function search(query:String):void 
 {
 	
@@ -44,17 +41,10 @@ private function search(query:String):void
 	//  - All results mode OFF: we obtain paginated results. First 30 results are displayed and following pages can be navigated with "next" and "previous" buttons.
 	
 	if (!this.modeCheckbox.selected){
-		if (!this.isSearching){
-			sc.getSoundsFromQuery({q:query}); // "q" parameter specifies the query. More options like filters are available as described in the API (http://tabasco.upf.edu/media/docs/api/resources.html#resources)
-		}
+		sc.getSoundsFromQuery({q:query}); // "q" parameter specifies the query. More options like filters are available as described in the API (http://tabasco.upf.edu/media/docs/api/resources.html#resources)
 	}else{
-		if (!this.isSearching){
-			sc.getNSoundsFromQuery({q:query},(int)(this.inputBoxNResults.text));
-		}
+		sc.getNSoundsFromQuery({q:query},(int)(this.inputBoxNResults.text));
 	}
-	// Turn on isSearching. While this is true, nno ew search requests are going to be performed
-	this.isSearching = true;
-	
 	
 	// When this method is called, "sc" will request the information to Freesound. Once recieved, it will be loaded into its attributes. 
 	// In order to know when is the information available, "sc" dispatches a "GotSoundCollection" event that should be catched with an EventListener.
@@ -68,9 +58,6 @@ private function search(query:String):void
 
 private function displayQueryResults(event:ResultEvent):void
 {
-	// Turn off isSearching variable (if there is any change on the search box, a new search will be processed)
-	this.isSearching = false;
-	
 	// We fill the resultsBox with the information of the query results
 	var info:String = "";
 	
