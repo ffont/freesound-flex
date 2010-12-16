@@ -61,7 +61,7 @@ package org.freesound
 		{
 			// Notify client that info is available
 			this.userLoaded = true;
-			this.dispatchEvent(new ResultEvent("GotUserInformation"));
+			this.dispatchEvent(new ResultEvent("GotUserInfo"));
 		}
 		
 		public function getPackList():Array{
