@@ -44,11 +44,6 @@ package org.freesound
 			this.getSoundFromRef("http://tabasco.upf.edu/api/sounds/" + id.toString());
 		}
 		
-		/*
-		public function getSoundFromName(id:int):void
-		{
-		}
-		*/
 		
 		// Result handler
 		private function resultHandler(event:ResultEvent):void

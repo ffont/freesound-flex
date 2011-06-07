@@ -11,9 +11,9 @@ import mx.events.ListEvent;
 import mx.rpc.events.FaultEvent;
 import mx.rpc.events.ResultEvent;
 
+import org.freesound.Sound;
 import org.freesound.SoundCollection;
 import org.freesound.User;
-import org.freesound.Sound;
 
 // Initialize sound collection object
 private var sc:SoundCollection = new SoundCollection(apiKey);
@@ -28,6 +28,10 @@ private var s:org.freesound.Sound = new org.freesound.Sound(apiKey);
 // Initialize soundchannel object to reproduce sounds
 private var schannel:SoundChannel = new SoundChannel();
 
+// Request ID
+private var requestId:int = 0;
+private var displayedRequestId:int = 0;
+
 private function search(query:String):void 
 {
 	
@@ -41,10 +45,12 @@ private function search(query:String):void
 	//  - All results mode OFF: we obtain paginated results. First 30 results are displayed and following pages can be navigated with "next" and "previous" buttons.
 	
 	if (!this.modeCheckbox.selected){
-		sc.getSoundsFromQuery({q:query}); // "q" parameter specifies the query. More options like filters are available as described in the API (http://tabasco.upf.edu/media/docs/api/resources.html#resources)
+		sc.getSoundsFromQuery({q:query, request_id:requestId}); // "q" parameter specifies the query. More options like filters are available as described in the API (http://tabasco.upf.edu/media/docs/api/resources.html#resources)
 	}else{
-		sc.getNSoundsFromQuery({q:query},(int)(this.inputBoxNResults.text));
+		sc.getNSoundsFromQuery({q:query, request_id:requestId},(int)(this.inputBoxNResults.text));
 	}
+	
+	this.requestId = this.requestId + 1;
 	
 	// When this method is called, "sc" will request the information to Freesound. Once recieved, it will be loaded into its attributes. 
 	// In order to know when is the information available, "sc" dispatches a "GotSoundCollection" event that should be catched with an EventListener.
@@ -58,28 +64,33 @@ private function search(query:String):void
 
 private function displayQueryResults(event:ResultEvent):void
 {
-	// We fill the resultsBox with the information of the query results
-	var info:String = "";
+	// Only update the results if the information on sc.request_id corresponds to a newer response than the currently displayed
+	if ((sc.request_id >= this.displayedRequestId)||(sc.request_id==0)){
+		this.displayedRequestId = sc.request_id;
 	
-	// Number of results
-	info = info + sc.num_results + " results found. Displaying page " + sc.current_page + "/" + sc.num_pages + ".\n\n";
-	this.resultsBox.text = info;
-	
-	// Individual results (only first page is displayed, 30 results)
-	// To navigate among other results, "next" and "previous" buttons must be used.
-	this.resultsGrid.dataProvider = sc.soundList;
-	
-	// Enable and disable "previous" and "next" buttons
-	if (sc.current_page == 1){
-		this.prevButton.enabled = false;
-	}else{
-		this.prevButton.enabled = true;
-	}
-	
-	if (sc.current_page == sc.num_pages){
-		this.nextButton.enabled = false;
-	}else{
-		this.nextButton.enabled = true;
+		// We fill the resultsBox with the information of the query results
+		var info:String = "";
+		
+		// Number of results
+		info = info + sc.num_results + " results found. Displaying page " + sc.current_page + "/" + sc.num_pages + ".\n\n";
+		this.resultsBox.text = info;
+		
+		// Individual results (only first page is displayed, 30 results)
+		// To navigate among other results, "next" and "previous" buttons must be used.
+		this.resultsGrid.dataProvider = sc.soundList;
+		
+		// Enable and disable "previous" and "next" buttons
+		if (sc.current_page == 1){
+			this.prevButton.enabled = false;
+		}else{
+			this.prevButton.enabled = true;
+		}
+		
+		if (sc.current_page == sc.num_pages){
+			this.nextButton.enabled = false;
+		}else{
+			this.nextButton.enabled = true;
+		}
 	}
 
 }
@@ -96,6 +107,15 @@ private function previous():void
 	// previous() function in SoundCollection works similar to next() but asking for the previous page.
 	sc.previousPage();	
 }
+
+private function similar():void
+{
+	// similar() function is used to fill the current SoundCollection object with similar sounds to the selected one
+	sc.getSimilarSoundsFromSoundId(this.s.info['id'],"music",25);
+	sc.addEventListener("GotSoundCollection", displayQueryResults);
+	sc.addEventListener(FaultEvent.FAULT, faultHandler);
+}
+
 
 private function toggleAllResultsMode():void
 {
@@ -116,17 +136,17 @@ private function faultHandler(event:FaultEvent):void
 private function gridItemClick(event:ListEvent):void 
 {
 	// When a result is selected, its waveform is loaded
-	this.waveformDisplay.source = this.resultsGrid.dataProvider[event.rowIndex].info.waveform_l;
-	this.spectrumDisplay.source = this.resultsGrid.dataProvider[event.rowIndex].info.spectral_l;
+	this.waveformDisplay.source = this.resultsGrid.dataProvider[event.rowIndex].info['waveform_l'];
+	this.spectrumDisplay.source = this.resultsGrid.dataProvider[event.rowIndex].info['spectral_l'];
 	
 	// And we also ask for extended information on the sound 
 	// (like its description, which is not included in the query result but can be accessed through sound reference)
-	this.s.getSoundFromRef(this.resultsGrid.dataProvider[event.rowIndex].info.ref);
+	this.s.getSoundFromRef(this.resultsGrid.dataProvider[event.rowIndex].info['ref']);
 	// We add the event listener that will be triggered when server returns sound information
 	s.addEventListener("GotSoundInfo", displaySoundInformation);
 	
 	// Moreover, data from its user is loaded
-	this.u.getUserFromRef(this.resultsGrid.dataProvider[event.rowIndex].info.user.ref);
+	this.u.getUserFromRef(this.resultsGrid.dataProvider[event.rowIndex].info['user']['ref']);
 	// We add the event listener that will be triggered when server returns user information
 	u.addEventListener("GotUserInfo", displayUserInformation); 
 }
@@ -134,11 +154,13 @@ private function gridItemClick(event:ListEvent):void
 // Function to handle user double clicks in the data grid
 private function gridItemDoubleClick(event:ListEvent):void 
 {
+	
 	// When a result is double clicked, it is reproduced
 	schannel.stop();
 	var snd:flash.media.Sound = new flash.media.Sound();
 	snd.addEventListener(Event.COMPLETE,onSoundLoadComplete);
-	var req:URLRequest = new URLRequest(this.resultsGrid.dataProvider[event.rowIndex].info.preview + "?api_key=" + apiKey);
+	
+	var req:URLRequest = new URLRequest(this.resultsGrid.dataProvider[event.rowIndex].info['preview-lq-mp3'] + "?api_key=" + apiKey);
 	snd.load(req);
 }
 
@@ -152,12 +174,13 @@ private function onSoundLoadComplete(event:Event):void
 // Functions to display specific sound and user information
 private function displayUserInformation(event:ResultEvent):void
 {
-	this.userName.text = u.info.username + " (joined "+ u.info.date_joined + ")";
+	this.userName.text = u.info['username'] + " (joined "+ u.info.date_joined + ")";
 }
 
 private function displaySoundInformation(event:ResultEvent):void
 {
-	this.soundName.text = s.info.base_filename_slug;
-	this.soundDuration.text = "(" + s.info.duration + " seconds)";
-	this.descriptionBox.text = s.info.description;
+	this.soundName.text = s.info['original_filename'];
+	this.soundDuration.text = "Duration : " + s.info['duration'] + " seconds | Uploaded: " + s.info['created'];
+	this.descriptionBox.text = s.info['description'];
+	this.similarButton.enabled = true;
 }

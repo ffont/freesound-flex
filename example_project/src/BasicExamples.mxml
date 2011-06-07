@@ -4,9 +4,10 @@
 	<mx:TextInput x="23" y="23" id="inputBox" change="this.search(this.inputBox.text)"/>
 	<mx:TextInput x="456" y="23" id="inputBoxNResults"  width="47" editable="true" enabled="false" text="15"/>
 	<mx:TextArea x="23" y="53" width="752" height="22" id="resultsBox" editable="false" borderStyle="none" text="-"/>
-	<mx:TextArea x="783" y="382" width="449" height="177" id="descriptionBox" editable="false" borderStyle="none" backgroundAlpha="0.0" color="#0B333C" text="-"/>
+	<mx:TextArea x="783" y="382" width="449" height="147" id="descriptionBox" editable="false" borderStyle="none" backgroundAlpha="0.0" color="#0B333C" text="-"/>
 	<mx:Button x="190" y="23" label="Search" click="this.search(this.inputBox.text)"/>
 	<mx:Button x="641" y="537" label="Previous" click="this.previous()" id="prevButton" enabled="false"/>
+	<mx:Button x="1045" y="537" label="Find 25 most similar sounds!" click="this.similar()" id="similarButton" enabled="false"/>
 	<mx:Button x="722" y="537" label="Next" click="this.next()" id="nextButton" enabled="false"/>
 	<mx:CheckBox x="263" y="23" label="All results mode, Max results:" id="modeCheckbox" click="this.toggleAllResultsMode()"/>
 	<mx:DataGrid x="23" y="83" width="752" id="resultsGrid" height="447"  itemClick="this.gridItemClick(event)" doubleClickEnabled="true" itemDoubleClick="this.gridItemDoubleClick(event)" >
@@ -23,5 +24,6 @@
 	<mx:Label x="783" y="80" text="-" fontWeight="bold" width="449" fontSize="10" id="soundDuration"/>
 	<mx:Label x="783" y="327" text="username:" fontWeight="bold" width="71" fontSize="10" id="userNameLabel"/>
 	<mx:Label x="783" y="364" text="sound description:" fontWeight="bold" width="140" fontSize="10" id="descriptionLabel" color="#0B333C"/>
+	<mx:Label x="23" y="539" text="Click on a row to get more information, double-click to hear the sound!"/>
 	
 </mx:Application>

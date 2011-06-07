@@ -4,6 +4,9 @@ package org.freesound
 	
 	import flash.events.EventDispatcher;
 	
+	import mx.rpc.AsyncResponder;
+	import mx.rpc.AsyncToken;
+	import mx.rpc.Responder;
 	import mx.rpc.events.FaultEvent;
 	import mx.rpc.events.ResultEvent;
 	import mx.rpc.http.HTTPService;
@@ -17,12 +20,15 @@ package org.freesound
 		public var listLoaded:Boolean = false;
 		private var fullResultsMode:Boolean = false;
 		
+		public var n:int = 0;
+		
 		// Sound list
 		public var soundList:Array = new Array();
 		public var num_results:int = 0;
 		public var num_pages:int = 0;
 		public var previous:String = "";
 		public var next:String = "";
+		public var request_id:int = -1;
 		
 		public var current_page:int = 1;
 		public var currentObtainedResults:int = 0;
@@ -35,15 +41,19 @@ package org.freesound
 			this.http.addEventListener( FaultEvent.FAULT, faultHandler );
 		}
 		
-		public function getSoundsFromRef(ref:String):void
+		public function getSoundsFromRef(ref:String, params:Object = null):void
 		{
 			
 			this.http.url = ref;
 			this.http.resultFormat = "text";
 			
-			var params:Object = {};
-			params.api_key = this.apiKey;
-			
+			if (params == null){
+				params = {};
+				params.api_key = this.apiKey;
+			}else{
+				params.api_key = this.apiKey;
+			}
+
 			this.http.send(params);	
 		}
 		
@@ -55,9 +65,18 @@ package org.freesound
 		
 		public function getSoundsFromPackId(id:int):void
 		{
-			//this.getSoundsFromQuery({f:"pack:" + packname + " username:" + username});
 			this.currentObtainedResults = 0;
 			this.getSoundsFromRef("http://tabasco.upf.edu/api/packs/" + id.toString() + "/sounds");
+		}
+		
+		public function getSimilarSoundsFromSoundId(id:int, preset:String = "music", num_results:int = 15):void
+		{
+			var params:Object = {}
+			params.preset = preset
+			params.num_results = num_results
+			
+			this.currentObtainedResults = 0;
+			this.getSoundsFromRef("http://tabasco.upf.edu/api/sounds/" + id.toString() + "/similar", params);
 		}
 		
 		public function getSoundsFromQuery(params:Object):void
@@ -74,7 +93,8 @@ package org.freesound
 			}
 			
 			this.currentObtainedResults = 0;
-			this.http.send(params);	
+			
+			this.http.send(params);
 			
 		}
 		
@@ -111,6 +131,7 @@ package org.freesound
 		
 		public function nextPage():void
 		{
+			
 			if (next != null){
 				this.getSoundsFromRef(this.next);
 				this.current_page = this.current_page + 1;
@@ -128,9 +149,11 @@ package org.freesound
 		// Result handler
 		private function resultHandler(event:ResultEvent):void
 		{
-			
+
 			var data:String = event.result.toString();
 			var jd:JSONDecoder = new JSONDecoder(data,true);
+
+			this.request_id = (int)(jd.getValue().request_id);
 			
 			// Fill data structure
 			if (!fullResultsMode){
