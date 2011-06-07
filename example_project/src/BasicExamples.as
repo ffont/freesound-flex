@@ -32,6 +32,9 @@ private var schannel:SoundChannel = new SoundChannel();
 private var requestId:int = 0;
 private var displayedRequestId:int = 0;
 
+// Initialize current display information
+private var currentDisplayInfo:String = "description";
+
 private function search(query:String):void 
 {
 	
@@ -80,16 +83,22 @@ private function displayQueryResults(event:ResultEvent):void
 		this.resultsGrid.dataProvider = sc.soundList;
 		
 		// Enable and disable "previous" and "next" buttons
-		if (sc.current_page == 1){
-			this.prevButton.enabled = false;
-		}else{
-			this.prevButton.enabled = true;
-		}
+		if (sc.num_pages > 1){
 		
-		if (sc.current_page == sc.num_pages){
-			this.nextButton.enabled = false;
+			if (sc.current_page == 1){
+				this.prevButton.enabled = false;
+			}else{
+				this.prevButton.enabled = true;
+			}
+			
+			if (sc.current_page == sc.num_pages){
+				this.nextButton.enabled = false;
+			}else{
+				this.nextButton.enabled = true;
+			}
 		}else{
-			this.nextButton.enabled = true;
+			this.nextButton.enabled = false;
+			this.prevButton.enabled = false;
 		}
 	}
 
@@ -112,10 +121,33 @@ private function similar():void
 {
 	// similar() function is used to fill the current SoundCollection object with similar sounds to the selected one
 	sc.getSimilarSoundsFromSoundId(this.s.info['id'],"music",25);
+	sc.current_page = 1;
+	sc.num_pages = 1;
 	sc.addEventListener("GotSoundCollection", displayQueryResults);
 	sc.addEventListener(FaultEvent.FAULT, faultHandler);
 }
 
+private function toggleAnalysisDescription():void
+{
+	if (currentDisplayInfo == "description"){
+		// Switching to show analysis
+		this.currentDisplayInfo = "analysis";
+		this.analysisDescriptionButton.label = "Show me sound description!";
+		this.analysisDescriptionLabel.text = "sound analysis:";
+		s.getSoundAnalysis();
+		s.addEventListener("GotSoundAnalysis", displaySoundAnalysis);
+		s.addEventListener(FaultEvent.FAULT, faultHandler);
+		this.analysisDescriptionBox.text = "retrieving analysis data..."
+			
+	}else if (currentDisplayInfo == "analysis"){
+		// Switching to show description
+		this.currentDisplayInfo = "description";
+		this.analysisDescriptionButton.label = "Show me sound analysis!";
+		this.analysisDescriptionLabel.text = "sound description:";
+		this.analysisDescriptionBox.text = s.info['description'];
+		
+	}
+}
 
 private function toggleAllResultsMode():void
 {
@@ -181,6 +213,24 @@ private function displaySoundInformation(event:ResultEvent):void
 {
 	this.soundName.text = s.info['original_filename'];
 	this.soundDuration.text = "Duration : " + s.info['duration'] + " seconds | Uploaded: " + s.info['created'];
-	this.descriptionBox.text = s.info['description'];
+	this.currentDisplayInfo = "description";
+	this.analysisDescriptionButton.label = "Show me sound analysis!"
+	this.analysisDescriptionLabel.text = "sound description:"
+	this.analysisDescriptionBox.text = s.info['description'];
 	this.similarButton.enabled = true;
+	this.analysisDescriptionButton.enabled = true;
+}
+
+private function displaySoundAnalysis(event:ResultEvent):void
+{
+	var analysis_string:String = "";
+	analysis_string = analysis_string + "lowlevel" + "\n\taverage_loudnes: " + s.analysis['lowlevel']['average_loudness'].toString();
+	analysis_string = analysis_string + "\nhighlevel" + "\n\tvoice_instrumental: " + s.analysis['highlevel']['voice_instrumental']['value'].toString();
+	analysis_string = analysis_string + "\n\tacoustic: " + s.analysis['highlevel']['acoustic']['value'].toString();
+	analysis_string = analysis_string + "\n\telectronic: " + s.analysis['highlevel']['electronic']['value'].toString();
+	analysis_string = analysis_string + "\ntonal" + "\n\tkey_key: " + s.analysis['tonal']['key_key'].toString();
+	analysis_string = analysis_string + "\n\tkey_scale: " + s.analysis['tonal']['key_scale'].toString();
+	
+	this.analysisDescriptionBox.text = analysis_string;
+	
 }
