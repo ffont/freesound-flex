@@ -2,10 +2,11 @@
 // This file must only contain a variable named "apiKey" like: public static const apiKey:String = "YOUR_KEY_HERE";
 include "ApiKey.as";
 
-// Import Freesound sound collections
+// Imports
 import flash.events.Event;
 import flash.media.Sound;
 import flash.media.SoundChannel;
+import flash.system.Security;
 
 import mx.events.ListEvent;
 import mx.rpc.events.FaultEvent;
@@ -14,6 +15,7 @@ import mx.rpc.events.ResultEvent;
 import org.freesound.Sound;
 import org.freesound.SoundCollection;
 import org.freesound.User;
+
 
 // Initialize sound collection object
 private var sc:SoundCollection = new SoundCollection(apiKey);
@@ -34,6 +36,11 @@ private var displayedRequestId:int = 0;
 
 // Initialize current display information
 private var currentDisplayInfo:String = "description";
+
+// Allow data from tabasco.upf.edu (to avoid sandbox violation errors)
+public function init():void{
+	Security.allowDomain("http://tabasco.upf.edu");
+}
 
 private function search(query:String):void 
 {
@@ -134,6 +141,7 @@ private function toggleAnalysisDescription():void
 		this.currentDisplayInfo = "analysis";
 		this.analysisDescriptionButton.label = "Show me sound description!";
 		this.analysisDescriptionLabel.text = "sound analysis:";
+		// We ask for analysis information (through a request to the API)
 		s.getSoundAnalysis();
 		s.addEventListener("GotSoundAnalysis", displaySoundAnalysis);
 		s.addEventListener(FaultEvent.FAULT, faultHandler);
@@ -223,6 +231,9 @@ private function displaySoundInformation(event:ResultEvent):void
 
 private function displaySoundAnalysis(event:ResultEvent):void
 {
+	// getSoundAnalysis() returns an object (s.analysis) with a lot of properties about the sound. In this example we only print some of them.
+	// For more information about what are those properties check the Freesound API documentation at: http://tabasco.upf.edu/docs/api/
+	
 	var analysis_string:String = "";
 	analysis_string = analysis_string + "lowlevel" + "\n\taverage_loudnes: " + s.analysis['lowlevel']['average_loudness'].toString();
 	analysis_string = analysis_string + "\nhighlevel" + "\n\tvoice_instrumental: " + s.analysis['highlevel']['voice_instrumental']['value'].toString();

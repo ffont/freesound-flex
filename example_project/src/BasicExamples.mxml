@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"  backgroundColor="#FFFFFF">
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml" layout="absolute"  backgroundColor="#FFFFFF" creationComplete="this.init()">
 <mx:Script source="BasicExamples.as"/>
 	<mx:TextInput x="23" y="23" id="inputBox" change="this.search(this.inputBox.text)"/>
 	<mx:TextInput x="456" y="23" id="inputBoxNResults"  width="47" editable="true" enabled="false" text="15"/>
