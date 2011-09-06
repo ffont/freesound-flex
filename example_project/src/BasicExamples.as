@@ -39,7 +39,7 @@ private var currentDisplayInfo:String = "description";
 
 // Allow data from tabasco.upf.edu (to avoid sandbox violation errors)
 public function init():void{
-	Security.allowDomain("http://tabasco.upf.edu");
+	Security.allowDomain("http://www..freesound.org");
 }
 
 private function search(query:String):void 

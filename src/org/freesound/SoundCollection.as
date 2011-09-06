@@ -60,13 +60,13 @@ package org.freesound
 		public function getSoundsFromUser(name:String):void
 		{
 			this.currentObtainedResults = 0;
-			this.getSoundsFromRef("http://tabasco.upf.edu/api/people/" + name + "/sounds");
+			this.getSoundsFromRef("http://www..freesound.org/api/people/" + name + "/sounds");
 		}
 		
 		public function getSoundsFromPackId(id:int):void
 		{
 			this.currentObtainedResults = 0;
-			this.getSoundsFromRef("http://tabasco.upf.edu/api/packs/" + id.toString() + "/sounds");
+			this.getSoundsFromRef("http://www..freesound.org/api/packs/" + id.toString() + "/sounds");
 		}
 		
 		public function getSimilarSoundsFromSoundId(id:int, preset:String = "music", num_results:int = 15):void
@@ -76,13 +76,13 @@ package org.freesound
 			params.num_results = num_results
 			
 			this.currentObtainedResults = 0;
-			this.getSoundsFromRef("http://tabasco.upf.edu/api/sounds/" + id.toString() + "/similar", params);
+			this.getSoundsFromRef("http://www..freesound.org/api/sounds/" + id.toString() + "/similar", params);
 		}
 		
 		public function getSoundsFromQuery(params:Object):void
 		{
 		
-			this.http.url = "http://tabasco.upf.edu/api/sounds/search";
+			this.http.url = "http://www..freesound.org/api/sounds/search";
 			this.http.resultFormat = "text";
 			
 			params.api_key = this.apiKey;
@@ -101,7 +101,7 @@ package org.freesound
 		public function getNSoundsFromQuery(params:Object, maxResults:int):void
 		{
 
-			this.http.url = "http://tabasco.upf.edu/api/sounds/search";
+			this.http.url = "http://www..freesound.org/api/sounds/search";
 			this.http.resultFormat = "text";
 			
 			params.api_key = this.apiKey;

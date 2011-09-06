@@ -38,7 +38,7 @@ package org.freesound
 		}
 		
 		public function getUserFromName(name:String):void{
-			this.getUserFromRef("http://tabasco.upf.edu/api/people/" + name);		
+			this.getUserFromRef("http://www..freesound.org/api/people/" + name);		
 		}
 				
 		// Result handler

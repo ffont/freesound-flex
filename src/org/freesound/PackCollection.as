@@ -40,7 +40,7 @@ package org.freesound
 		public function getPacksFromUser(name:String):void
 		{
 			this.user_name = name;
-			this.getPacksFromRef("http://tabasco.upf.edu/api/people/" + name + "/packs");
+			this.getPacksFromRef("http://www..freesound.org/api/people/" + name + "/packs");
 		}
 		
 		// Result handler

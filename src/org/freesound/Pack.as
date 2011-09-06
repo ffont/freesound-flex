@@ -30,7 +30,7 @@ package org.freesound
 		
 		public function getPackFromId(id:int):void
 		{
-			this.http.url = "http://tabasco.upf.edu/api/packs/" + id.toString();
+			this.http.url = "http://www..freesound.org/api/packs/" + id.toString();
 			this.http.resultFormat = "text";
 			
 			var params:Object = {};

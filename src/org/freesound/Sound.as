@@ -51,14 +51,14 @@ package org.freesound
 		
 		public function getSoundFromId(id:int):void
 		{
-			this.getSoundFromRef("http://tabasco.upf.edu/api/sounds/" + id.toString());
+			this.getSoundFromRef("http://www..freesound.org/api/sounds/" + id.toString());
 		}
 		
 		public function getSoundAnalysis(filter:String = ""):void
 		{
 			// If there is no sound loaded we cannot retrieve analysis data
 			if (soundLoaded == true){
-				this.http.url = "http://tabasco.upf.edu/api/sounds/" + this.info['id'].toString() + "/analysis/" + filter;
+				this.http.url = "http://www..freesound.org/api/sounds/" + this.info['id'].toString() + "/analysis/" + filter;
 				this.http.resultFormat = "text";
 				currentTypeOfRequestedData = "sound_analysis";
 				
